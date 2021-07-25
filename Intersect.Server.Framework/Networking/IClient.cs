@@ -15,7 +15,6 @@ namespace Intersect.Server.Framework.Networking
         bool Banned { get; set; }
         List<IPlayer> Characters { get; }
         Guid EditorMap { get; set; }
-        string Email { get; }
         IPlayer Entity { get; set; }
         long FloodDetects { get; set; }
         bool FloodKicked { get; set; }
@@ -40,7 +39,6 @@ namespace Intersect.Server.Framework.Networking
 
         void Disconnect(string reason = "", bool shutdown = false);
         void FailedAttempt();
-        string GetIp();
         void HandlePackets();
         bool IsConnected();
         void LoadCharacter(IPlayer character);
