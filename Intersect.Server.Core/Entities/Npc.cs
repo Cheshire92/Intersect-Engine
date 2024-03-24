@@ -14,7 +14,7 @@ using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.Entities.States;
-using Intersect.Server.Entities.States.NPC;
+using Intersect.Server.Entities.States.Npc;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
@@ -63,7 +63,7 @@ namespace Intersect.Server.Entities
         public bool Despawnable;
 
         //Pathfinding
-        private Pathfinder mPathFinder;
+        public Pathfinder PathFinder;
 
         private Task mPathfindingTask;
 
@@ -146,9 +146,9 @@ namespace Intersect.Server.Entities
             }
 
             Range = (byte)myBase.SightRange;
-            mPathFinder = new Pathfinder(this);
+            PathFinder = new Pathfinder(this);
 
-            StateMachine = new EntityStateMachine(this, new NPCIdleState());
+            StateMachine = new EntityStateMachine(this, new NpcIdleState());
         }
 
         public NpcBase Base { get; private set; }
@@ -199,7 +199,7 @@ namespace Intersect.Server.Entities
             var oldTarget = Target;
 
             // Are we resetting? If so, do not allow for a new target.
-            var pathTarget = mPathFinder?.GetTarget();
+            var pathTarget = PathFinder?.GetTarget();
             if (AggroCenterMap != null && pathTarget != null &&
                 pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
             {
@@ -627,7 +627,7 @@ namespace Intersect.Server.Entities
         {
             var target = Target;
 
-            if (target == null || mPathFinder.GetTarget() == null)
+            if (target == null || PathFinder.GetTarget() == null)
             {
                 return;
             }
@@ -778,7 +778,6 @@ namespace Intersect.Server.Entities
                 if (lockObtained)
                 {
                     base.Update(timeMs);
-
                     StateMachine.Update(timeMs);
                 }
             }
@@ -804,7 +803,7 @@ namespace Intersect.Server.Entities
             AggroCenterX = 0;
             AggroCenterY = 0;
             AggroCenterZ = 0;
-            mPathFinder?.SetTarget(null);
+            PathFinder?.SetTarget(null);
             mResetting = false;
         }
 
@@ -821,7 +820,7 @@ namespace Intersect.Server.Entities
 
                 // Try and move back to where we came from before we started chasing something.
                 mResetting = true;
-                mPathFinder.SetTarget(new PathfinderTarget(AggroCenterMap.Id, AggroCenterX, AggroCenterY, AggroCenterZ));
+                PathFinder.SetTarget(new PathfinderTarget(AggroCenterMap.Id, AggroCenterX, AggroCenterY, AggroCenterZ));
                 return true;
             }
             return false;
@@ -838,7 +837,7 @@ namespace Intersect.Server.Entities
 
             if (clearLocation)
             {
-                mPathFinder.SetTarget(null);
+                PathFinder.SetTarget(null);
                 AggroCenterMap = null;
                 AggroCenterX = 0;
                 AggroCenterY = 0;
@@ -969,7 +968,7 @@ namespace Intersect.Server.Entities
             }
 
             // Are we resetting? If so, do not allow for a new target.
-            var pathTarget = mPathFinder?.GetTarget();
+            var pathTarget = PathFinder?.GetTarget();
             if (AggroCenterMap != null && pathTarget != null &&
                 pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
             {
@@ -980,7 +979,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     //We're resetting and just got attacked, and we allow reengagement.. let's stop resetting and fight!
-                    mPathFinder?.SetTarget(null);
+                    PathFinder?.SetTarget(null);
                     mResetting = false;
                     AssignTarget(attackedBy);
                     return;

@@ -8,9 +8,9 @@ namespace Intersect.Server.Entities.States;
 
 public abstract class EntityState : IDisposable
 {
-    private Entity mEntity;
+    internal Entity mEntity;
 
-    private EntityStateMachine mEntityStateMachine;
+    internal EntityStateMachine mEntityStateMachine;
 
     public virtual void Init(Entity entity, EntityStateMachine entityStateMachine)
     {

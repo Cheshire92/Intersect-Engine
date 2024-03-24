@@ -7,12 +7,9 @@ using Intersect.Enums;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
 
-namespace Intersect.Server.Entities.States.NPC;
-public class NPCIdleState : EntityState
+namespace Intersect.Server.Entities.States.Npc;
+public class NpcIdleState : NpcState
 {
-
-    private Npc mNpc;
-
     private long mLastRandomMove;
 
     private long mLastTargetScan;
@@ -22,7 +19,7 @@ public class NPCIdleState : EntityState
     public override void Init(Entity entity, EntityStateMachine entityStateMachine)
     {
         base.Init(entity, entityStateMachine);
-        mNpc = (Npc)entity;
+        mNpc = (Entities.Npc)entity;
     }
 
     public override void Update(long timeMs)
@@ -62,9 +59,11 @@ public class NPCIdleState : EntityState
         // It's time to d-d-d-d-duel!
         if (mTarget != null)
         {
-            mNpc.StateMachine.SetState(new NPCCombatState(mTarget));
+            mEntityStateMachine.SetState(new NpcCombatState(mTarget));
         }
 
+        // Update our base class at the end.
+        base.Update(timeMs);
     }
 
     private void MoveRandomly(long timeMs)
@@ -132,7 +131,7 @@ public class NPCIdleState : EntityState
                             }
                         }
                     }
-                    else if (entity is Npc npc)
+                    else if (entity is Entities.Npc npc)
                     {
                         if (mNpc.Base.Aggressive && mNpc.Base.AggroList.Contains(npc.Base.Id))
                         {

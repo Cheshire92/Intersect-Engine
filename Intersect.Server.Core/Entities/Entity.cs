@@ -2817,7 +2817,7 @@ namespace Intersect.Server.Entities
             return yPositive ? Direction.UpRight : Direction.DownRight;
         }
 
-        protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+        public bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
         {
             if (z != Z)
             {

@@ -25,7 +25,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
     }
 
-    partial class Pathfinder
+    public partial class Pathfinder
     {
 
         private int mConsecutiveFails;
