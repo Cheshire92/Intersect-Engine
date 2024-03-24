@@ -2772,7 +2772,7 @@ namespace Intersect.Server.Entities
         {
         }
 
-        protected Direction DirectionToTarget(Entity en)
+        public Direction DirectionToTarget(Entity en)
         {
             if (en == null || IsTurnAroundWhileCastingDisabled)
             {

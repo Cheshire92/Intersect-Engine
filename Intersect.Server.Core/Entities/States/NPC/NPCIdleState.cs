@@ -19,7 +19,6 @@ public class NpcIdleState : NpcState
     public override void Init(Entity entity, EntityStateMachine entityStateMachine)
     {
         base.Init(entity, entityStateMachine);
-        mNpc = (Entities.Npc)entity;
     }
 
     public override void Update(long timeMs)

@@ -623,7 +623,7 @@ namespace Intersect.Server.Entities
             return blockerType == MovementBlockerType.NotBlocked;
         }
 
-        private void TryCastSpells()
+        public void TryCastSpells()
         {
             var target = Target;
 

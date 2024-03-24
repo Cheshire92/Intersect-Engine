@@ -26,7 +26,6 @@ public class NpcCombatState : NpcState
     public override void Init(Entity entity, EntityStateMachine entityStateMachine)
     {
         base.Init(entity, entityStateMachine);
-        mNpc = (Entities.Npc)entity;
         mNpc.AssignTarget(mInitialTarget);
     }
 
@@ -38,8 +37,17 @@ public class NpcCombatState : NpcState
             return;
         }
 
+        // Try to cast a spell before attempting to do anything else!
+        if (!mFleeing)
+        {
+            mNpc.TryCastSpells();
+        }
+        
         // Update our movement towards our target.
         UpdateMovement(timeMs);
+
+        // Try to atack our target!
+        UpdateAttack(timeMs);
 
         // Update our base class at the end.
         base.Update(timeMs);
@@ -169,22 +177,12 @@ public class NpcCombatState : NpcState
                     }
                     break;
                 case PathfinderResult.OutOfRange:
-                    //TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                    //tempTarget = Target;
-                    //targetMap = Guid.Empty;
-                    break;
                 case PathfinderResult.NoPathToTarget:
-                    //TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                    //tempTarget = Target;
-                    //targetMap = Guid.Empty;
-                    break;
                 case PathfinderResult.Failure:
-                    //targetMap = Guid.Empty;
-                    //TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                    //tempTarget = Target;
+                    mNpc.TryFindNewTarget(timeMs, mTarget?.Id ?? Guid.Empty, true);
                     break;
                 case PathfinderResult.Wait:
-                    //targetMap = Guid.Empty;
+                    // Tick, Tock
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -193,6 +191,31 @@ public class NpcCombatState : NpcState
     }
 
     private bool IsOneBlockAway(PathfinderTarget target) => mNpc.IsOneBlockAway(target.TargetMapId, target.TargetX, target.TargetY, target.TargetZ);
+
+    private void UpdateAttack(long timeMs)
+    {
+        if (!mFleeing)
+        {
+            if (mNpc.Dir != mNpc.DirectionToTarget(mTarget) && mNpc.DirectionToTarget(mTarget) != Direction.None)
+            {
+                mNpc.ChangeDir(mNpc.DirectionToTarget(mTarget));
+            }
+            else
+            {
+                if (mTarget == null)
+                {
+                    mNpc.TryFindNewTarget(timeMs);
+                }
+                else
+                {
+                    if (mNpc.CanAttack(mTarget, null))
+                    {
+                        mNpc.TryAttack(mTarget);
+                    }
+                }
+            }
+        }
+    }
 
     public override void Delete()
     {
