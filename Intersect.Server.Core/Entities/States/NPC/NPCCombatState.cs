@@ -16,8 +16,6 @@ public class NpcCombatState : NpcState
 
     private Pathfinder mPathFinder => mNpc.PathFinder;
 
-    private bool mFleeing;
-
     public NpcCombatState(Entity target)
     {
         mInitialTarget = target;
@@ -32,16 +30,13 @@ public class NpcCombatState : NpcState
     public override void Update(long timeMs)
     {
         // If this NPC has recently moved, don't do anything.
-        if (mNpc.MoveTimer >= timeMs)
-        {
-            return;
-        }
+        //if (mNpc.MoveTimer >= timeMs)
+        //{
+        //    return;
+        //}
 
         // Try to cast a spell before attempting to do anything else!
-        if (!mFleeing)
-        {
-            mNpc.TryCastSpells();
-        }
+        mNpc.TryCastSpells();
         
         // Update our movement towards our target.
         UpdateMovement(timeMs);
@@ -126,36 +121,6 @@ public class NpcCombatState : NpcState
                     var dir = mPathFinder.GetMove();
                     if (dir > Direction.None)
                     {
-                        if (mFleeing)
-                        {
-                            switch (dir)
-                            {
-                                case Direction.Up:
-                                    dir = Direction.Down;
-                                    break;
-                                case Direction.Down:
-                                    dir = Direction.Up;
-                                    break;
-                                case Direction.Left:
-                                    dir = Direction.Right;
-                                    break;
-                                case Direction.Right:
-                                    dir = Direction.Left;
-                                    break;
-                                case Direction.UpLeft:
-                                    dir = Direction.UpRight;
-                                    break;
-                                case Direction.UpRight:
-                                    dir = Direction.UpLeft;
-                                    break;
-                                case Direction.DownRight:
-                                    dir = Direction.DownLeft;
-                                    break;
-                                case Direction.DownLeft:
-                                    dir = Direction.DownRight;
-                                    break;
-                            }
-                        }
                         if (mNpc.CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
                         {
                             //check if NPC is snared or stunned
@@ -194,24 +159,21 @@ public class NpcCombatState : NpcState
 
     private void UpdateAttack(long timeMs)
     {
-        if (!mFleeing)
+        if (mNpc.Dir != mNpc.DirectionToTarget(mTarget) && mNpc.DirectionToTarget(mTarget) != Direction.None)
         {
-            if (mNpc.Dir != mNpc.DirectionToTarget(mTarget) && mNpc.DirectionToTarget(mTarget) != Direction.None)
+            mNpc.ChangeDir(mNpc.DirectionToTarget(mTarget));
+        }
+        else
+        {
+            if (mTarget == null)
             {
-                mNpc.ChangeDir(mNpc.DirectionToTarget(mTarget));
+                mNpc.TryFindNewTarget(timeMs);
             }
             else
             {
-                if (mTarget == null)
+                if (mNpc.CanAttack(mTarget, null))
                 {
-                    mNpc.TryFindNewTarget(timeMs);
-                }
-                else
-                {
-                    if (mNpc.CanAttack(mTarget, null))
-                    {
-                        mNpc.TryAttack(mTarget);
-                    }
+                    mNpc.TryAttack(mTarget);
                 }
             }
         }
