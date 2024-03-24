@@ -110,6 +110,17 @@ public class NpcCombatState : NpcState
 
     private void UpdatePathFinderMovement(long timeMs)
     {
+        //check if NPC is snared or stunned
+        foreach (var status in mNpc.CachedStatuses)
+        {
+            if (status.Type == SpellEffect.Stun ||
+                status.Type == SpellEffect.Snare ||
+                status.Type == SpellEffect.Sleep)
+            {
+                return;
+            }
+        }
+
         // Are we at our target yet?
         var pathtarget = mPathFinder.GetTarget();
         if (pathtarget != null && !IsOneBlockAway(pathtarget))
@@ -123,16 +134,6 @@ public class NpcCombatState : NpcState
                     {
                         if (mNpc.CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
                         {
-                            //check if NPC is snared or stunned
-                            foreach (var status in mNpc.CachedStatuses)
-                            {
-                                if (status.Type == SpellEffect.Stun ||
-                                    status.Type == SpellEffect.Snare ||
-                                    status.Type == SpellEffect.Sleep)
-                                {
-                                    return;
-                                }
-                            }
                             mNpc.Move(dir, null);
                         }
                         else
@@ -159,6 +160,12 @@ public class NpcCombatState : NpcState
 
     private void UpdateAttack(long timeMs)
     {
+        var pathtarget = mPathFinder.GetTarget();
+        if (pathtarget != null && !IsOneBlockAway(pathtarget))
+        {
+            return;
+        }
+
         if (mNpc.Dir != mNpc.DirectionToTarget(mTarget) && mNpc.DirectionToTarget(mTarget) != Direction.None)
         {
             mNpc.ChangeDir(mNpc.DirectionToTarget(mTarget));

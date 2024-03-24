@@ -65,6 +65,17 @@ public class NpcIdleState : NpcState
 
     private void MoveRandomly(long timeMs)
     {
+        //check if we are affected by a status effect that does not allow motion.
+        foreach (var status in mNpc.CachedStatuses)
+        {
+            if (status.Type == SpellEffect.Stun ||
+                status.Type == SpellEffect.Snare ||
+                status.Type == SpellEffect.Sleep)
+            {
+                return;
+            }
+        }
+
         // If our NPC movement type is standing still, simply randomize our movement timer again and exit out!
         if (mNpc.Base.Movement == (int)NpcMovement.StandStill)
         {
@@ -85,17 +96,6 @@ public class NpcIdleState : NpcState
             var direction = Randomization.NextDirection();
             if (mNpc.CanMoveInDirection(direction))
             {
-                //check if we are affected by a status effect that does not allow motion.
-                foreach (var status in mNpc.CachedStatuses)
-                {
-                    if (status.Type == SpellEffect.Stun ||
-                        status.Type == SpellEffect.Snare ||
-                        status.Type == SpellEffect.Sleep)
-                    {
-                        return;
-                    }
-                }
-
                 // Finally move!
                 mNpc.Move(direction, null);
             }
