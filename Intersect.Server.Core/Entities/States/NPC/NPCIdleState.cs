@@ -10,8 +10,6 @@ using Intersect.Utilities;
 namespace Intersect.Server.Entities.States.Npc;
 public class NpcIdleState : NpcState
 {
-    private long mLastRandomMove;
-
     private long mLastTargetScan;
 
     private Entity mTarget;
@@ -30,13 +28,13 @@ public class NpcIdleState : NpcState
         }
 
         // If our random movement timer has expired, move randomly.
-        if (mLastRandomMove < timeMs)
+        if (mNpc.LastRandomMove < timeMs)
         {
             MoveRandomly(timeMs);
 
             // TODO: Do not hardcode movement timer?
             // Update our movement timer.
-            mLastRandomMove = timeMs + Randomization.Next(1000, 3000);
+            mNpc.LastRandomMove = timeMs + Randomization.Next(1000, 3000);
         }
 
         // Attempt to find a new target for glorious battle!

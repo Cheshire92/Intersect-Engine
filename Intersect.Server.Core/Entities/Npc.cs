@@ -62,6 +62,8 @@ namespace Intersect.Server.Entities
 
         public bool Despawnable;
 
+        public long LastRandomMove;
+
         //Pathfinding
         public Pathfinder PathFinder;
 
@@ -690,14 +692,14 @@ namespace Intersect.Server.Entities
                 var dirToEnemy = DirectionToTarget(target);
                 if (dirToEnemy != Dir)
                 {
-                    //if (LastRandomMove >= Timing.Global.Milliseconds)
-                    //{
-                    //    return;
-                    //}
+                    if (LastRandomMove >= Timing.Global.Milliseconds)
+                    {
+                        return;
+                    }
 
                     //Face the target -- next frame fire -- then go on with life
                     ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                    //LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                    LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
 
                     return;
                 }
