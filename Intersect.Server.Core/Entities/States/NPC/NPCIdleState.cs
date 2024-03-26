@@ -12,7 +12,14 @@ public class NpcIdleState : NpcState
 {
     private long mLastTargetScan;
 
-    private Entity mTarget;
+    /// <summary>
+    /// Creates a new instance of the <see cref="NpcIdleState"/> class.
+    /// In this state the Npc will idle on the map, moving around according to its movement settings.
+    /// When attacked or when aggressive it will switch to <see cref="NpcCombatState"/> to attack valid targets.
+    /// </summary>
+    public NpcIdleState()
+    {
+    }
 
     public override void Init(Entity entity, EntityStateMachine entityStateMachine)
     {
@@ -38,9 +45,10 @@ public class NpcIdleState : NpcState
         }
 
         // Attempt to find a new target for glorious battle!
+        Entity target = null;
         if (mLastTargetScan < timeMs && mNpc.Base.Aggressive)
         {
-            mTarget = FindTarget();
+            target = FindTarget();
 
             // TODO: Do not hardcode target scan timer?
             // Update our target scan timer.
@@ -50,13 +58,13 @@ public class NpcIdleState : NpcState
         // Have we been attacked by something? If so, Retaliate!
         if (mNpc.DamageMap.Count > 0)
         {
-            mTarget = mNpc.DamageMap.ToArray().OrderByDescending(x => x.Value).FirstOrDefault().Key;
+            target = mNpc.DamageMap.ToArray().OrderByDescending(x => x.Value).FirstOrDefault().Key;
         }
 
         // It's time to d-d-d-d-duel!
-        if (mTarget != null)
+        if (target != null)
         {
-            mEntityStateMachine.SetState(new NpcCombatState(mTarget));
+            mEntityStateMachine.SetState(new NpcCombatState(target));
         }
 
         // Update our base class at the end.
@@ -156,7 +164,6 @@ public class NpcIdleState : NpcState
     public override void Delete()
     {
         mNpc = null;
-        mTarget = null;
     }
 
 }

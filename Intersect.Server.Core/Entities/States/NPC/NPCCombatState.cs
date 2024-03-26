@@ -16,15 +16,48 @@ public class NpcCombatState : NpcState
 
     private Pathfinder mPathFinder => mNpc.PathFinder;
 
-    public NpcCombatState(Entity target)
+    private MapController mLeashMap;
+
+    private int mLeashX;
+
+    private int mLeashY;
+
+    private int mLeashZ;
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="NpcCombatState"/> class.
+    /// In this state the Npc will attempt to fight other entities.
+    /// Once it detects it is no longer allowed to attack due to the server configuration, it will change to <see cref="NPCResetState"/>.
+    /// </summary>
+    /// <param name="target">The <see cref="Entity"/> to attack initially.</param>
+    /// <param name="oldLeashMap">OPTIONAL: The <see cref="MapController"/> to return to if a reset state is triggered.</param>
+    /// <param name="oldLeashX">OPTIONAL: The X position to return to if a reset state is triggered.</param>
+    /// <param name="oldLeashY">OPTIONAL: The Y position to return to if a reset state is triggered.</param>
+    /// <param name="oldLeashZ">OPTIONAL: The Z position to return to if a reset state is triggered.</param>
+    public NpcCombatState(Entity target, MapController oldLeashMap = null, int oldLeashX = -1, int oldLeashY = -1, int oldLeashZ = -1)
     {
         mInitialTarget = target;
+        mLeashMap = oldLeashMap;
+        mLeashX = oldLeashX;
+        mLeashY = oldLeashY;
+        mLeashZ = oldLeashZ;
     }
 
     public override void Init(Entity entity, EntityStateMachine entityStateMachine)
     {
         base.Init(entity, entityStateMachine);
+        
+        // Assign our target appropriately.
         mNpc.AssignTarget(mInitialTarget);
+
+        // Set up our leash position, if not set by creating this instance.
+        if (mLeashMap == null) 
+        {
+            mLeashMap = mNpc.Map;
+            mLeashX = mNpc.X;
+            mLeashY = mNpc.Y;
+            mLeashZ = mNpc.Z;
+        } 
     }
 
     public override void Update(long timeMs)
@@ -43,6 +76,13 @@ public class NpcCombatState : NpcState
 
         // Try to atack our target!
         UpdateAttack(timeMs);
+
+        // Should we reset based on our combat timer or leashing settings?
+        if (ShouldExitCombat(timeMs))
+        {
+            mEntityStateMachine.SetState(new NPCResetState(mLeashMap, mLeashX, mLeashY, mLeashZ));
+            return;
+        }
 
         // Update our base class at the end.
         base.Update(timeMs);
@@ -186,8 +226,30 @@ public class NpcCombatState : NpcState
         }
     }
 
+    private bool ShouldExitCombat(long timeMs)
+    {
+        // Check whether our configuration allows us to check for a reset radius, if so check whether we've moved out of our boundaries.
+        if (Options.Npc.AllowResetRadius && mLeashMap != null && (mNpc.GetDistanceTo(mLeashMap, mLeashX, mLeashY) > Math.Max(Options.Npc.ResetRadius, Math.Min(mNpc.Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight)))))
+        {
+            return true;
+        }
+
+        // Check whether our configuration allows us to reset after we've been out of combat for a specified amount of time.
+        if (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && timeMs > mNpc.CombatTimer)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public override void Delete()
     {
+        mInitialTarget = null;
+        mLeashMap = null;
+        mLeashX = 0;
+        mLeashY = 0;
+        mLeashZ = 0;
     }
 
 }

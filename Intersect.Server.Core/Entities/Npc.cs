@@ -828,7 +828,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        private void Reset(bool resetVitals, bool clearLocation = false)
+        public void Reset(bool resetVitals, bool clearLocation = false)
         {
             // Remove our target.
             RemoveTarget();
