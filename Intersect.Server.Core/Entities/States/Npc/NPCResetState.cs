@@ -9,7 +9,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.States.Npc;
-public class NPCResetState : NpcState
+public class NpcResetState : NpcState
 {
 
     private MapController mDestMap;
@@ -25,7 +25,7 @@ public class NPCResetState : NpcState
     private int mResetFailureCounter;
 
     /// <summary>
-    /// Creates a new instance of the <see cref="NPCResetState"/> class.
+    /// Creates a new instance of the <see cref="NpcResetState"/> class.
     /// In this state the Npc will reset according to server settings, i.e. it can reset vitals and move to its last known idle location if configured to do so.
     /// If allowed by server settings, it will re-engage in combat and return to <see cref="NpcCombatState"/>.
     /// If the reset is completed, it will return to <see cref="NpcIdleState"/>/
@@ -34,7 +34,7 @@ public class NPCResetState : NpcState
     /// <param name="x">The X position to return to if configured to do so.</param>
     /// <param name="y">The Y position to return to if configured to do so.</param>
     /// <param name="z">The Z position to return to if configured to do so.</param>
-    public NPCResetState(MapController map, int x, int y, int z)
+    public NpcResetState(MapController map, int x, int y, int z)
     {
         mDestMap = map;
         mDestX = x;

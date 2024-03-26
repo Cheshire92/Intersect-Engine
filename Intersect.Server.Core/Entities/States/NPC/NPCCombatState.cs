@@ -27,7 +27,7 @@ public class NpcCombatState : NpcState
     /// <summary>
     /// Creates a new instance of the <see cref="NpcCombatState"/> class.
     /// In this state the Npc will attempt to fight other entities.
-    /// Once it detects it is no longer allowed to attack due to the server configuration, it will change to <see cref="NPCResetState"/>.
+    /// Once it detects it is no longer allowed to attack due to the server configuration, it will change to <see cref="NpcResetState"/>.
     /// </summary>
     /// <param name="target">The <see cref="Entity"/> to attack initially.</param>
     /// <param name="oldLeashMap">OPTIONAL: The <see cref="MapController"/> to return to if a reset state is triggered.</param>
@@ -80,7 +80,7 @@ public class NpcCombatState : NpcState
         // Should we reset based on our combat timer or leashing settings?
         if (ShouldExitCombat(timeMs))
         {
-            StateMachine.SetState(new NPCResetState(mLeashMap, mLeashX, mLeashY, mLeashZ));
+            StateMachine.SetState(new NpcResetState(mLeashMap, mLeashX, mLeashY, mLeashZ));
             return;
         }
     }
