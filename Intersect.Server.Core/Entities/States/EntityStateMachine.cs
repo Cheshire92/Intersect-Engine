@@ -11,11 +11,11 @@ public class EntityStateMachine : IDisposable
 
     private Entity mEntity;
 
-    public EntityState LastState { get; private set; }
+    public IEntityState LastState { get; private set; }
 
-    public EntityState CurrentState { get; private set; }
+    public IEntityState CurrentState { get; private set; }
 
-    public EntityStateMachine(Entity entity, EntityState startingState)
+    public EntityStateMachine(Entity entity, IEntityState startingState)
     {
         mEntity = entity;
         SetState(startingState);
@@ -32,10 +32,10 @@ public class EntityStateMachine : IDisposable
         CurrentState?.Update(timeMs);
     }
 
-    public void SetState(EntityState state)
+    public void SetState(IEntityState state)
     {
         // Dispose our last state
-        LastState?.Dispose();
+        LastState?.Delete();
 
         // Tell our current state to finish whatever it is doing and set it to our last state for reference.
         CurrentState?.Delete();
@@ -43,15 +43,17 @@ public class EntityStateMachine : IDisposable
 
         // Set a new current state and initialize it!
         CurrentState = state;
-        CurrentState.Init(mEntity, this);
+        CurrentState.Entity = mEntity;
+        CurrentState.StateMachine = this;
+        CurrentState.Init();
     }
 
     public void Dispose()
     {
         mEntity = null;
-        CurrentState?.Dispose();
+        CurrentState?.Delete();
         CurrentState = null;
-        LastState?.Dispose();
+        LastState?.Delete();
         LastState = null;
     }
 

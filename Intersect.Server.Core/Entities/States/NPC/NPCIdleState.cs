@@ -21,32 +21,27 @@ public class NpcIdleState : NpcState
     {
     }
 
-    public override void Init(Entity entity, EntityStateMachine entityStateMachine)
-    {
-        base.Init(entity, entityStateMachine);
-    }
-
     public override void Update(long timeMs)
     {
         // If this NPC has recently moved, don't do anything.
-        if (mNpc.MoveTimer >= timeMs)
+        if (Npc.MoveTimer >= timeMs)
         {
             return;
         }
 
         // If our random movement timer has expired, move randomly.
-        if (mNpc.LastRandomMove < timeMs)
+        if (Npc.LastRandomMove < timeMs)
         {
             MoveRandomly(timeMs);
 
             // TODO: Do not hardcode movement timer?
             // Update our movement timer.
-            mNpc.LastRandomMove = timeMs + Randomization.Next(1000, 3000);
+            Npc.LastRandomMove = timeMs + Randomization.Next(1000, 3000);
         }
 
         // Attempt to find a new target for glorious battle!
         Entity target = null;
-        if (mLastTargetScan < timeMs && mNpc.Base.Aggressive)
+        if (mLastTargetScan < timeMs && Npc.Base.Aggressive)
         {
             target = FindTarget();
 
@@ -56,25 +51,23 @@ public class NpcIdleState : NpcState
         }
 
         // Have we been attacked by something? If so, Retaliate!
-        if (mNpc.DamageMap.Count > 0)
+        if (Npc.DamageMap.Count > 0)
         {
-            target = mNpc.DamageMap.ToArray().OrderByDescending(x => x.Value).FirstOrDefault().Key;
+            target = Npc.DamageMap.ToArray().OrderByDescending(x => x.Value).FirstOrDefault().Key;
         }
 
         // It's time to d-d-d-d-duel!
         if (target != null)
         {
-            mEntityStateMachine.SetState(new NpcCombatState(target));
+            StateMachine.SetState(new NpcCombatState(target));
         }
 
-        // Update our base class at the end.
-        base.Update(timeMs);
     }
 
     private void MoveRandomly(long timeMs)
     {
         //check if we are affected by a status effect that does not allow motion.
-        foreach (var status in mNpc.CachedStatuses)
+        foreach (var status in Npc.CachedStatuses)
         {
             if (status.Type == SpellEffect.Stun ||
                 status.Type == SpellEffect.Snare ||
@@ -85,14 +78,14 @@ public class NpcIdleState : NpcState
         }
 
         // If our NPC movement type is standing still, simply randomize our movement timer again and exit out!
-        if (mNpc.Base.Movement == (int)NpcMovement.StandStill)
+        if (Npc.Base.Movement == (int)NpcMovement.StandStill)
         {
             return;
         }
         // If our movement type is turning randomly, just turn and exit out!
-        else if (mNpc.Base.Movement == (int)NpcMovement.TurnRandomly)
+        else if (Npc.Base.Movement == (int)NpcMovement.TurnRandomly)
         {
-            mNpc.ChangeDir(Randomization.NextDirection());
+            Npc.ChangeDir(Randomization.NextDirection());
             return;
         }
 
@@ -102,10 +95,10 @@ public class NpcIdleState : NpcState
         {
             // Pick a random direction, check if we can move into it.
             var direction = Randomization.NextDirection();
-            if (mNpc.CanMoveInDirection(direction))
+            if (Npc.CanMoveInDirection(direction))
             {
                 // Finally move!
-                mNpc.Move(direction, null);
+                Npc.Move(direction, null);
             }
         }
     }
@@ -113,22 +106,22 @@ public class NpcIdleState : NpcState
     private Entity FindTarget()
     {
         var possibleTargets = new List<Entity>();
-        var closestRange = mNpc.Range + 1;
+        var closestRange = Npc.Range + 1;
         var closestIndex = -1;
 
-        foreach (var instance in MapController.GetSurroundingMapInstances(mNpc.MapId, mNpc.MapInstanceId, true))
+        foreach (var instance in MapController.GetSurroundingMapInstances(Npc.MapId, Npc.MapInstanceId, true))
         {
             foreach (var entity in instance.GetCachedEntities())
             {
-                if (entity != null && !entity.IsDead() && entity != mNpc)
+                if (entity != null && !entity.IsDead() && entity != Npc)
                 {
                     //TODO Check if NPC is allowed to attack player with new conditions
                     if (entity is Player player)
                     {
-                        if (mNpc.ShouldAttackPlayerOnSight(player))
+                        if (Npc.ShouldAttackPlayerOnSight(player))
                         {
-                            var dist = mNpc.GetDistanceTo(entity);
-                            if (dist <= mNpc.Range && dist < closestRange)
+                            var dist = Npc.GetDistanceTo(entity);
+                            if (dist <= Npc.Range && dist < closestRange)
                             {
                                 possibleTargets.Add(entity);
                                 closestIndex = possibleTargets.Count - 1;
@@ -138,10 +131,10 @@ public class NpcIdleState : NpcState
                     }
                     else if (entity is Entities.Npc npc)
                     {
-                        if (mNpc.Base.Aggressive && mNpc.Base.AggroList.Contains(npc.Base.Id))
+                        if (Npc.Base.Aggressive && Npc.Base.AggroList.Contains(npc.Base.Id))
                         {
-                            var dist = mNpc.GetDistanceTo(entity);
-                            if (dist <= mNpc.Range && dist < closestRange)
+                            var dist = Npc.GetDistanceTo(entity);
+                            if (dist <= Npc.Range && dist < closestRange)
                             {
                                 possibleTargets.Add(entity);
                                 closestIndex = possibleTargets.Count - 1;
@@ -159,11 +152,6 @@ public class NpcIdleState : NpcState
         }
 
         return null;
-    }
-
-    public override void Delete()
-    {
-        mNpc = null;
     }
 
 }

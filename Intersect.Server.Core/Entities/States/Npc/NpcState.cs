@@ -6,20 +6,34 @@ using System.Threading.Tasks;
 using Intersect.Server.Maps;
 
 namespace Intersect.Server.Entities.States.Npc;
-public abstract class NpcState : EntityState
+public abstract class NpcState : IEntityState
 {
-    internal Entities.Npc mNpc;
+    public Entity Entity { get; set; }
 
-    internal Guid mLastMap;
+    public EntityStateMachine StateMachine { get; set; }
 
-    public override void Init(Entity entity, EntityStateMachine entityStateMachine)
+    /// <summary>
+    /// The <see cref="Entities.Npc"/> for which this state is executed.
+    /// </summary>
+    public Entities.Npc Npc { get; set; }
+
+    /// <summary>
+    /// Initializes the Entity State.
+    /// Handle any setup that your state may require before updates start being called here.
+    /// Don't forget to call base.Init() before anything else to set up your <see cref="Npc"/> reference!
+    /// </summary>
+    public virtual void Init()
     {
-        base.Init(entity, entityStateMachine);
-        mNpc = (Entities.Npc)entity;
+        Npc = (Entities.Npc)Entity;
     }
 
-    public override void Update(long timeMs)
+    public abstract void Update(long timeMs);
+
+    public virtual void Delete()
     {
+        StateMachine = null;
+        Entity = null;
+        Npc = null;
     }
 
 }

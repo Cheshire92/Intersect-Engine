@@ -42,15 +42,15 @@ public class NPCResetState : NpcState
         mDestZ = z;
     }
 
-    public override void Init(Entity entity, EntityStateMachine entityStateMachine)
+    public override void Init()
     {
-        base.Init(entity, entityStateMachine);
+        base.Init();
 
         // Reset our Npc, update our vitals if configured to do so.
-        mNpc.Reset(Options.Npc.ResetVitalsAndStatusses);
+        Npc.Reset(Options.Npc.ResetVitalsAndStatusses);
         
         // Send our aggression update to let people know our anger was just a phase.
-        PacketSender.SendNpcAggressionToProximity(mNpc);
+        PacketSender.SendNpcAggressionToProximity(Npc);
     }
 
     public override void Update(long timeMs)
@@ -58,39 +58,39 @@ public class NPCResetState : NpcState
         // If we do not have the server configured to handle a reset radius, simply drop the NPC back into the Idle state!
         if (!Options.Npc.AllowResetRadius)
         {
-            mEntityStateMachine.SetState(new NpcIdleState());
+            StateMachine.SetState(new NpcIdleState());
             return;
         }
 
         // If we have somehow obtained a target and we are allowed to return to battle, engage!
-        if (Options.Npc.AllowEngagingWhileResetting && mNpc.Target != null && !mNpc.Target.IsDead() && mNpc.InRangeOf(mNpc.Target, Options.MapWidth * 2))
+        if (Options.Npc.AllowEngagingWhileResetting && Npc.Target != null && !Npc.Target.IsDead() && Npc.InRangeOf(Npc.Target, Options.MapWidth * 2))
         {
             // If our configuration allows for a new reset location before we have reset, update it by not passing our old one along.
             if (Options.Npc.AllowNewResetLocationBeforeFinish)
             {
-                mEntityStateMachine.SetState(new NpcCombatState(mNpc.Target));
+                StateMachine.SetState(new NpcCombatState(Npc.Target));
             }
             // Otherwise, pass our old values along to keep the reset location intact.
             else
             {
-                mEntityStateMachine.SetState(new NpcCombatState(mNpc.Target, mDestMap, mDestX, mDestY, mDestZ));
+                StateMachine.SetState(new NpcCombatState(Npc.Target, mDestMap, mDestX, mDestY, mDestZ));
             }
             
             return;
         }
 
         // Reset our vitals on every update if configured to do so.
-        mNpc.Reset(Options.Npc.ContinuouslyResetVitalsAndStatuses);
+        Npc.Reset(Options.Npc.ContinuouslyResetVitalsAndStatuses);
 
         // ******************************************************
         // TODO: Move you lazy bugger!
         // ******************************************************
 
         // Check if we've arrived at our reset destination, if so return to idle.
-        var distance = mNpc.GetDistanceTo(mDestMap, mDestZ, mDestY);
+        var distance = Npc.GetDistanceTo(mDestMap, mDestZ, mDestY);
         if (distance < 1) 
         {
-            mEntityStateMachine.SetState(new NpcIdleState());
+            StateMachine.SetState(new NpcIdleState());
             return;
         }
         // Okay, so we have not reached our destination yet.
@@ -112,7 +112,7 @@ public class NPCResetState : NpcState
                 // TODO: Make the reset counter configurable?
                 if (mResetFailureCounter >= 100)
                 {
-                    mEntityStateMachine.SetState(new NpcIdleState());
+                    StateMachine.SetState(new NpcIdleState());
                     return;
                 }
             }
@@ -121,9 +121,6 @@ public class NPCResetState : NpcState
             // TODO: Find a new target to harass if allowed, you freak!
             // ******************************************************
         }
-
-        // Update our base class at the end.
-        base.Update(timeMs);
     }
 
     public override void Delete()

@@ -12,9 +12,9 @@ public class NpcCombatState : NpcState
 {
     private Entity mInitialTarget;
 
-    private Entity mTarget => mNpc.Target;
+    private Entity mTarget => Npc.Target;
 
-    private Pathfinder mPathFinder => mNpc.PathFinder;
+    private Pathfinder mPathFinder => Npc.PathFinder;
 
     private MapController mLeashMap;
 
@@ -43,20 +43,20 @@ public class NpcCombatState : NpcState
         mLeashZ = oldLeashZ;
     }
 
-    public override void Init(Entity entity, EntityStateMachine entityStateMachine)
+    public override void Init()
     {
-        base.Init(entity, entityStateMachine);
+        base.Init();
         
         // Assign our target appropriately.
-        mNpc.AssignTarget(mInitialTarget);
+        Npc.AssignTarget(mInitialTarget);
 
         // Set up our leash position, if not set by creating this instance.
         if (mLeashMap == null) 
         {
-            mLeashMap = mNpc.Map;
-            mLeashX = mNpc.X;
-            mLeashY = mNpc.Y;
-            mLeashZ = mNpc.Z;
+            mLeashMap = Npc.Map;
+            mLeashX = Npc.X;
+            mLeashY = Npc.Y;
+            mLeashZ = Npc.Z;
         } 
     }
 
@@ -69,7 +69,7 @@ public class NpcCombatState : NpcState
         //}
 
         // Try to cast a spell before attempting to do anything else!
-        mNpc.TryCastSpells();
+        Npc.TryCastSpells();
         
         // Update our movement towards our target.
         UpdateMovement(timeMs);
@@ -80,12 +80,9 @@ public class NpcCombatState : NpcState
         // Should we reset based on our combat timer or leashing settings?
         if (ShouldExitCombat(timeMs))
         {
-            mEntityStateMachine.SetState(new NPCResetState(mLeashMap, mLeashX, mLeashY, mLeashZ));
+            StateMachine.SetState(new NPCResetState(mLeashMap, mLeashX, mLeashY, mLeashZ));
             return;
         }
-
-        // Update our base class at the end.
-        base.Update(timeMs);
     }
 
     private void UpdateMovement(long timeMs)
@@ -94,7 +91,7 @@ public class NpcCombatState : NpcState
         if (mTarget != null)
         {
             // Don't bother with pathfinding logic for static NPCs.
-            if (mNpc.Base.Movement != (int)NpcMovement.Static)
+            if (Npc.Base.Movement != (int)NpcMovement.Static)
             {
                 // Update our pathfinder target.
                 UpdatePathFinderTarget();
@@ -112,10 +109,10 @@ public class NpcCombatState : NpcState
         var targetX = mTarget.X;
         var targetY = mTarget.Y;
         var targetZ = mTarget.Z;
-        if (targetMap != mNpc.MapId)
+        if (targetMap != Npc.MapId)
         {
             var found = false;
-            foreach (var map in MapController.Get(mNpc.MapId).SurroundingMaps)
+            foreach (var map in MapController.Get(Npc.MapId).SurroundingMaps)
             {
                 if (map.Id == targetMap)
                 {
@@ -151,7 +148,7 @@ public class NpcCombatState : NpcState
     private void UpdatePathFinderMovement(long timeMs)
     {
         //check if NPC is snared or stunned
-        foreach (var status in mNpc.CachedStatuses)
+        foreach (var status in Npc.CachedStatuses)
         {
             if (status.Type == SpellEffect.Stun ||
                 status.Type == SpellEffect.Snare ||
@@ -172,9 +169,9 @@ public class NpcCombatState : NpcState
                     var dir = mPathFinder.GetMove();
                     if (dir > Direction.None)
                     {
-                        if (mNpc.CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
+                        if (Npc.CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
                         {
-                            mNpc.Move(dir, null);
+                            Npc.Move(dir, null);
                         }
                         else
                         {
@@ -185,7 +182,7 @@ public class NpcCombatState : NpcState
                 case PathfinderResult.OutOfRange:
                 case PathfinderResult.NoPathToTarget:
                 case PathfinderResult.Failure:
-                    mNpc.TryFindNewTarget(timeMs, mTarget?.Id ?? Guid.Empty, true);
+                    Npc.TryFindNewTarget(timeMs, mTarget?.Id ?? Guid.Empty, true);
                     break;
                 case PathfinderResult.Wait:
                     // Tick, Tock
@@ -196,7 +193,7 @@ public class NpcCombatState : NpcState
         }
     }
 
-    private bool IsOneBlockAway(PathfinderTarget target) => mNpc.IsOneBlockAway(target.TargetMapId, target.TargetX, target.TargetY, target.TargetZ);
+    private bool IsOneBlockAway(PathfinderTarget target) => Npc.IsOneBlockAway(target.TargetMapId, target.TargetX, target.TargetY, target.TargetZ);
 
     private void UpdateAttack(long timeMs)
     {
@@ -206,21 +203,21 @@ public class NpcCombatState : NpcState
             return;
         }
 
-        if (mNpc.Dir != mNpc.DirectionToTarget(mTarget) && mNpc.DirectionToTarget(mTarget) != Direction.None)
+        if (Npc.Dir != Npc.DirectionToTarget(mTarget) && Npc.DirectionToTarget(mTarget) != Direction.None)
         {
-            mNpc.ChangeDir(mNpc.DirectionToTarget(mTarget));
+            Npc.ChangeDir(Npc.DirectionToTarget(mTarget));
         }
         else
         {
             if (mTarget == null)
             {
-                mNpc.TryFindNewTarget(timeMs);
+                Npc.TryFindNewTarget(timeMs);
             }
             else
             {
-                if (mNpc.CanAttack(mTarget, null))
+                if (Npc.CanAttack(mTarget, null))
                 {
-                    mNpc.TryAttack(mTarget);
+                    Npc.TryAttack(mTarget);
                 }
             }
         }
@@ -229,13 +226,13 @@ public class NpcCombatState : NpcState
     private bool ShouldExitCombat(long timeMs)
     {
         // Check whether our configuration allows us to check for a reset radius, if so check whether we've moved out of our boundaries.
-        if (Options.Npc.AllowResetRadius && mLeashMap != null && (mNpc.GetDistanceTo(mLeashMap, mLeashX, mLeashY) > Math.Max(Options.Npc.ResetRadius, Math.Min(mNpc.Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight)))))
+        if (Options.Npc.AllowResetRadius && mLeashMap != null && (Npc.GetDistanceTo(mLeashMap, mLeashX, mLeashY) > Math.Max(Options.Npc.ResetRadius, Math.Min(Npc.Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight)))))
         {
             return true;
         }
 
         // Check whether our configuration allows us to reset after we've been out of combat for a specified amount of time.
-        if (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && timeMs > mNpc.CombatTimer)
+        if (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && timeMs > Npc.CombatTimer)
         {
             return true;
         }
