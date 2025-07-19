@@ -35,8 +35,10 @@ namespace Intersect.Editor.Forms.Editors
             grpNpcs = new DarkGroupBox();
             btnClearSearch = new DarkButton();
             txtSearch = new DarkTextBox();
-            lstGameObjects = new Controls.GameObjectList();
+            lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             grpGeneral = new DarkGroupBox();
+            lblDisplayName = new Label();
+            txtDisplayName = new DarkTextBox();
             lblAlpha = new Label();
             lblBlue = new Label();
             lblGreen = new Label();
@@ -285,6 +287,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             grpGeneral.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpGeneral.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGeneral.Controls.Add(lblDisplayName);
+            grpGeneral.Controls.Add(txtDisplayName);
             grpGeneral.Controls.Add(lblAlpha);
             grpGeneral.Controls.Add(lblBlue);
             grpGeneral.Controls.Add(lblGreen);
@@ -308,15 +312,37 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
             grpGeneral.Name = "grpGeneral";
             grpGeneral.Padding = new Padding(4, 3, 4, 3);
-            grpGeneral.Size = new Size(241, 330);
+            grpGeneral.Size = new Size(304, 330);
             grpGeneral.TabIndex = 14;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
             // 
+            // lblDisplayName
+            // 
+            lblDisplayName.AutoSize = true;
+            lblDisplayName.Location = new System.Drawing.Point(9, 53);
+            lblDisplayName.Margin = new Padding(4, 0, 4, 0);
+            lblDisplayName.Name = "lblDisplayName";
+            lblDisplayName.Size = new Size(83, 15);
+            lblDisplayName.TabIndex = 80;
+            lblDisplayName.Text = "Display Name:";
+            // 
+            // txtDisplayName
+            // 
+            txtDisplayName.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtDisplayName.BorderStyle = BorderStyle.FixedSingle;
+            txtDisplayName.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtDisplayName.Location = new System.Drawing.Point(100, 51);
+            txtDisplayName.Margin = new Padding(4, 3, 4, 3);
+            txtDisplayName.Name = "txtDisplayName";
+            txtDisplayName.Size = new Size(157, 23);
+            txtDisplayName.TabIndex = 79;
+            txtDisplayName.TextChanged += txtDisplayName_TextChanged;
+            // 
             // lblAlpha
             // 
             lblAlpha.AutoSize = true;
-            lblAlpha.Location = new System.Drawing.Point(126, 302);
+            lblAlpha.Location = new System.Drawing.Point(162, 265);
             lblAlpha.Margin = new Padding(4, 0, 4, 0);
             lblAlpha.Name = "lblAlpha";
             lblAlpha.Size = new Size(41, 15);
@@ -326,7 +352,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblBlue
             // 
             lblBlue.AutoSize = true;
-            lblBlue.Location = new System.Drawing.Point(126, 272);
+            lblBlue.Location = new System.Drawing.Point(162, 236);
             lblBlue.Margin = new Padding(4, 0, 4, 0);
             lblBlue.Name = "lblBlue";
             lblBlue.Size = new Size(33, 15);
@@ -336,7 +362,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblGreen
             // 
             lblGreen.AutoSize = true;
-            lblGreen.Location = new System.Drawing.Point(10, 302);
+            lblGreen.Location = new System.Drawing.Point(160, 208);
             lblGreen.Margin = new Padding(4, 0, 4, 0);
             lblGreen.Name = "lblGreen";
             lblGreen.Size = new Size(41, 15);
@@ -346,7 +372,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblRed
             // 
             lblRed.AutoSize = true;
-            lblRed.Location = new System.Drawing.Point(10, 272);
+            lblRed.Location = new System.Drawing.Point(160, 180);
             lblRed.Margin = new Padding(4, 0, 4, 0);
             lblRed.Name = "lblRed";
             lblRed.Size = new Size(30, 15);
@@ -357,7 +383,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudRgbaA.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudRgbaA.ForeColor = System.Drawing.Color.Gainsboro;
-            nudRgbaA.Location = new System.Drawing.Point(178, 300);
+            nudRgbaA.Location = new System.Drawing.Point(214, 263);
             nudRgbaA.Margin = new Padding(4, 3, 4, 3);
             nudRgbaA.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             nudRgbaA.Name = "nudRgbaA";
@@ -370,7 +396,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudRgbaB.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudRgbaB.ForeColor = System.Drawing.Color.Gainsboro;
-            nudRgbaB.Location = new System.Drawing.Point(178, 270);
+            nudRgbaB.Location = new System.Drawing.Point(214, 234);
             nudRgbaB.Margin = new Padding(4, 3, 4, 3);
             nudRgbaB.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             nudRgbaB.Name = "nudRgbaB";
@@ -383,7 +409,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudRgbaG.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudRgbaG.ForeColor = System.Drawing.Color.Gainsboro;
-            nudRgbaG.Location = new System.Drawing.Point(64, 300);
+            nudRgbaG.Location = new System.Drawing.Point(214, 206);
             nudRgbaG.Margin = new Padding(4, 3, 4, 3);
             nudRgbaG.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             nudRgbaG.Name = "nudRgbaG";
@@ -396,7 +422,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudRgbaR.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudRgbaR.ForeColor = System.Drawing.Color.Gainsboro;
-            nudRgbaR.Location = new System.Drawing.Point(64, 270);
+            nudRgbaR.Location = new System.Drawing.Point(214, 178);
             nudRgbaR.Margin = new Padding(4, 3, 4, 3);
             nudRgbaR.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             nudRgbaR.Name = "nudRgbaR";
@@ -407,7 +433,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnAddFolder
             // 
-            btnAddFolder.Location = new System.Drawing.Point(206, 54);
+            btnAddFolder.Location = new System.Drawing.Point(236, 79);
             btnAddFolder.Margin = new Padding(4, 3, 4, 3);
             btnAddFolder.Name = "btnAddFolder";
             btnAddFolder.Padding = new Padding(6);
@@ -419,7 +445,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFolder
             // 
             lblFolder.AutoSize = true;
-            lblFolder.Location = new System.Drawing.Point(10, 59);
+            lblFolder.Location = new System.Drawing.Point(10, 84);
             lblFolder.Margin = new Padding(4, 0, 4, 0);
             lblFolder.Name = "lblFolder";
             lblFolder.Size = new Size(43, 15);
@@ -439,7 +465,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.FlatStyle = FlatStyle.Flat;
             cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
             cmbFolder.FormattingEnabled = true;
-            cmbFolder.Location = new System.Drawing.Point(70, 54);
+            cmbFolder.Location = new System.Drawing.Point(100, 79);
             cmbFolder.Margin = new Padding(4, 3, 4, 3);
             cmbFolder.Name = "cmbFolder";
             cmbFolder.Size = new Size(131, 24);
@@ -451,7 +477,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblLevel
             // 
             lblLevel.AutoSize = true;
-            lblLevel.Location = new System.Drawing.Point(10, 91);
+            lblLevel.Location = new System.Drawing.Point(10, 116);
             lblLevel.Margin = new Padding(4, 0, 4, 0);
             lblLevel.Name = "lblLevel";
             lblLevel.Size = new Size(37, 15);
@@ -462,7 +488,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudLevel.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudLevel.ForeColor = System.Drawing.Color.Gainsboro;
-            nudLevel.Location = new System.Drawing.Point(70, 89);
+            nudLevel.Location = new System.Drawing.Point(100, 114);
             nudLevel.Margin = new Padding(4, 3, 4, 3);
             nudLevel.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             nudLevel.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -486,7 +512,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
             cmbSprite.FormattingEnabled = true;
             cmbSprite.Items.AddRange(new object[] { "None" });
-            cmbSprite.Location = new System.Drawing.Point(70, 121);
+            cmbSprite.Location = new System.Drawing.Point(100, 146);
             cmbSprite.Margin = new Padding(4, 3, 4, 3);
             cmbSprite.Name = "cmbSprite";
             cmbSprite.Size = new Size(156, 24);
@@ -498,7 +524,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblPic
             // 
             lblPic.AutoSize = true;
-            lblPic.Location = new System.Drawing.Point(10, 125);
+            lblPic.Location = new System.Drawing.Point(10, 150);
             lblPic.Margin = new Padding(4, 0, 4, 0);
             lblPic.Name = "lblPic";
             lblPic.Size = new Size(40, 15);
@@ -508,7 +534,7 @@ namespace Intersect.Editor.Forms.Editors
             // picNpc
             // 
             picNpc.BackColor = System.Drawing.Color.Black;
-            picNpc.Location = new System.Drawing.Point(64, 153);
+            picNpc.Location = new System.Drawing.Point(15, 178);
             picNpc.Margin = new Padding(4, 3, 4, 3);
             picNpc.Name = "picNpc";
             picNpc.Size = new Size(112, 111);
@@ -530,7 +556,7 @@ namespace Intersect.Editor.Forms.Editors
             txtName.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             txtName.BorderStyle = BorderStyle.FixedSingle;
             txtName.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtName.Location = new System.Drawing.Point(70, 22);
+            txtName.Location = new System.Drawing.Point(100, 24);
             txtName.Margin = new Padding(4, 3, 4, 3);
             txtName.Name = "txtName";
             txtName.Size = new Size(157, 23);
@@ -608,7 +634,7 @@ namespace Intersect.Editor.Forms.Editors
             grpStats.Margin = new Padding(4, 3, 4, 3);
             grpStats.Name = "grpStats";
             grpStats.Padding = new Padding(4, 3, 4, 3);
-            grpStats.Size = new Size(241, 246);
+            grpStats.Size = new Size(304, 246);
             grpStats.TabIndex = 15;
             grpStats.TabStop = false;
             grpStats.Text = "Stats:";
@@ -793,7 +819,7 @@ namespace Intersect.Editor.Forms.Editors
             lblExp.Location = new System.Drawing.Point(124, 175);
             lblExp.Margin = new Padding(4, 0, 4, 0);
             lblExp.Name = "lblExp";
-            lblExp.Size = new Size(29, 15);
+            lblExp.Size = new Size(28, 15);
             lblExp.TabIndex = 11;
             lblExp.Text = "Exp:";
             // 
@@ -813,7 +839,7 @@ namespace Intersect.Editor.Forms.Editors
             pnlContainer.Location = new System.Drawing.Point(252, 39);
             pnlContainer.Margin = new Padding(4, 3, 4, 3);
             pnlContainer.Name = "pnlContainer";
-            pnlContainer.Size = new Size(1138, 635);
+            pnlContainer.Size = new Size(1192, 635);
             pnlContainer.TabIndex = 17;
             // 
             // grpImmunities
@@ -831,7 +857,7 @@ namespace Intersect.Editor.Forms.Editors
             grpImmunities.Controls.Add(chkSilence);
             grpImmunities.Controls.Add(chkKnockback);
             grpImmunities.ForeColor = System.Drawing.Color.Gainsboro;
-            grpImmunities.Location = new System.Drawing.Point(536, 507);
+            grpImmunities.Location = new System.Drawing.Point(597, 507);
             grpImmunities.Margin = new Padding(2);
             grpImmunities.Name = "grpImmunities";
             grpImmunities.Padding = new Padding(2);
@@ -860,7 +886,7 @@ namespace Intersect.Editor.Forms.Editors
             lblTenacity.Location = new System.Drawing.Point(6, 141);
             lblTenacity.Margin = new Padding(4, 0, 4, 0);
             lblTenacity.Name = "lblTenacity";
-            lblTenacity.Size = new Size(74, 15);
+            lblTenacity.Size = new Size(75, 15);
             lblTenacity.TabIndex = 79;
             lblTenacity.Text = "Tenacity (%):";
             // 
@@ -870,7 +896,7 @@ namespace Intersect.Editor.Forms.Editors
             chkTaunt.Location = new System.Drawing.Point(205, 110);
             chkTaunt.Margin = new Padding(4, 3, 4, 3);
             chkTaunt.Name = "chkTaunt";
-            chkTaunt.Size = new Size(55, 19);
+            chkTaunt.Size = new Size(56, 19);
             chkTaunt.TabIndex = 86;
             chkTaunt.Text = "Taunt";
             chkTaunt.CheckedChanged += chkTaunt_CheckedChanged;
@@ -892,7 +918,7 @@ namespace Intersect.Editor.Forms.Editors
             chkTransform.Location = new System.Drawing.Point(205, 83);
             chkTransform.Margin = new Padding(4, 3, 4, 3);
             chkTransform.Name = "chkTransform";
-            chkTransform.Size = new Size(79, 19);
+            chkTransform.Size = new Size(80, 19);
             chkTransform.TabIndex = 84;
             chkTransform.Text = "Transform";
             chkTransform.CheckedChanged += chkTransform_CheckedChanged;
@@ -972,7 +998,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCombat.Controls.Add(lblAttackAnimation);
             grpCombat.Controls.Add(lblDamage);
             grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            grpCombat.Location = new System.Drawing.Point(536, 6);
+            grpCombat.Location = new System.Drawing.Point(597, 6);
             grpCombat.Margin = new Padding(4, 3, 4, 3);
             grpCombat.Name = "grpCombat";
             grpCombat.Padding = new Padding(4, 3, 4, 3);
@@ -1075,7 +1101,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCritMultiplier.Location = new System.Drawing.Point(12, 119);
             lblCritMultiplier.Margin = new Padding(4, 0, 4, 0);
             lblCritMultiplier.Name = "lblCritMultiplier";
-            lblCritMultiplier.Size = new Size(156, 15);
+            lblCritMultiplier.Size = new Size(155, 15);
             lblCritMultiplier.TabIndex = 62;
             lblCritMultiplier.Text = "Crit Multiplier (Default 1.5x):";
             // 
@@ -1189,7 +1215,7 @@ namespace Intersect.Editor.Forms.Editors
             lblDamageType.Location = new System.Drawing.Point(10, 167);
             lblDamageType.Margin = new Padding(4, 0, 4, 0);
             lblDamageType.Name = "lblDamageType";
-            lblDamageType.Size = new Size(81, 15);
+            lblDamageType.Size = new Size(82, 15);
             lblDamageType.TabIndex = 53;
             lblDamageType.Text = "Damage Type:";
             // 
@@ -1258,7 +1284,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCommonEvents.Margin = new Padding(2);
             grpCommonEvents.Name = "grpCommonEvents";
             grpCommonEvents.Padding = new Padding(2);
-            grpCommonEvents.Size = new Size(241, 134);
+            grpCommonEvents.Size = new Size(304, 134);
             grpCommonEvents.TabIndex = 32;
             grpCommonEvents.TabStop = false;
             grpCommonEvents.Text = "Common Events";
@@ -1346,7 +1372,7 @@ namespace Intersect.Editor.Forms.Editors
             grpBehavior.Controls.Add(nudSightRange);
             grpBehavior.Controls.Add(lblSightRange);
             grpBehavior.ForeColor = System.Drawing.Color.Gainsboro;
-            grpBehavior.Location = new System.Drawing.Point(844, 6);
+            grpBehavior.Location = new System.Drawing.Point(905, 6);
             grpBehavior.Margin = new Padding(4, 3, 4, 3);
             grpBehavior.Name = "grpBehavior";
             grpBehavior.Padding = new Padding(4, 3, 4, 3);
@@ -1526,7 +1552,7 @@ namespace Intersect.Editor.Forms.Editors
             grpRegen.Controls.Add(lblManaRegen);
             grpRegen.Controls.Add(lblRegenHint);
             grpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            grpRegen.Location = new System.Drawing.Point(259, 6);
+            grpRegen.Location = new System.Drawing.Point(320, 6);
             grpRegen.Margin = new Padding(2);
             grpRegen.Name = "grpRegen";
             grpRegen.Padding = new Padding(2);
@@ -1605,7 +1631,7 @@ namespace Intersect.Editor.Forms.Editors
             grpDrops.Controls.Add(lblDropChance);
             grpDrops.Controls.Add(lblDropItem);
             grpDrops.ForeColor = System.Drawing.Color.Gainsboro;
-            grpDrops.Location = new System.Drawing.Point(261, 408);
+            grpDrops.Location = new System.Drawing.Point(322, 408);
             grpDrops.Margin = new Padding(4, 3, 4, 3);
             grpDrops.Name = "grpDrops";
             grpDrops.Padding = new Padding(4, 3, 4, 3);
@@ -1741,7 +1767,7 @@ namespace Intersect.Editor.Forms.Editors
             lblDropMaxAmount.Location = new System.Drawing.Point(163, 156);
             lblDropMaxAmount.Margin = new Padding(4, 0, 4, 0);
             lblDropMaxAmount.Name = "lblDropMaxAmount";
-            lblDropMaxAmount.Size = new Size(80, 15);
+            lblDropMaxAmount.Size = new Size(79, 15);
             lblDropMaxAmount.TabIndex = 15;
             lblDropMaxAmount.Text = "Max Amount:";
             // 
@@ -1777,7 +1803,7 @@ namespace Intersect.Editor.Forms.Editors
             grpNpcVsNpc.Controls.Add(chkAttackAllies);
             grpNpcVsNpc.Controls.Add(chkEnabled);
             grpNpcVsNpc.ForeColor = System.Drawing.Color.Gainsboro;
-            grpNpcVsNpc.Location = new System.Drawing.Point(844, 404);
+            grpNpcVsNpc.Location = new System.Drawing.Point(905, 404);
             grpNpcVsNpc.Margin = new Padding(4, 3, 4, 3);
             grpNpcVsNpc.Name = "grpNpcVsNpc";
             grpNpcVsNpc.Padding = new Padding(4, 3, 4, 3);
@@ -1887,7 +1913,7 @@ namespace Intersect.Editor.Forms.Editors
             grpSpells.Controls.Add(btnAdd);
             grpSpells.Controls.Add(lstSpells);
             grpSpells.ForeColor = System.Drawing.Color.Gainsboro;
-            grpSpells.Location = new System.Drawing.Point(261, 148);
+            grpSpells.Location = new System.Drawing.Point(322, 148);
             grpSpells.Margin = new Padding(4, 3, 4, 3);
             grpSpells.Name = "grpSpells";
             grpSpells.Padding = new Padding(4, 3, 4, 3);
@@ -2029,7 +2055,7 @@ namespace Intersect.Editor.Forms.Editors
             toolStrip.Location = new System.Drawing.Point(0, 0);
             toolStrip.Name = "toolStrip";
             toolStrip.Padding = new Padding(6, 0, 1, 0);
-            toolStrip.Size = new Size(1393, 29);
+            toolStrip.Size = new Size(1448, 29);
             toolStrip.TabIndex = 45;
             toolStrip.Text = "toolStrip1";
             // 
@@ -2137,8 +2163,7 @@ namespace Intersect.Editor.Forms.Editors
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-            ClientSize = new Size(1393, 728);
-            ControlBox = true;
+            ClientSize = new Size(1448, 728);
             Controls.Add(toolStrip);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
@@ -2359,5 +2384,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkCheckBox chkKnockback;
         private DarkNumericUpDown nudDropMinAmount;
         private Label lblDropMinAmount;
+        private Label lblDisplayName;
+        private DarkTextBox txtDisplayName;
     }
 }

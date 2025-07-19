@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
@@ -26,7 +27,7 @@ namespace Intersect.Server.Entities;
 
 public partial class Npc : Entity
 {
-
+    
     //Spell casting
     public long CastFreq;
 
@@ -1704,6 +1705,7 @@ public partial class Npc : Entity
 
         var pkt = (NpcEntityPacket)packet;
         pkt.Aggression = GetAggression(forPlayer);
+        pkt.DisplayName = Descriptor.DisplayName;
 
         return pkt;
     }

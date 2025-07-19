@@ -148,6 +148,8 @@ public partial class NPCDescriptor : DatabaseObject<NPCDescriptor>, IFolderable
         set => AttackAnimationId = value?.Id ?? Guid.Empty;
     }
 
+    public string DisplayName { get; set; }
+    
     //Behavior
     public bool Aggressive { get; set; }
 

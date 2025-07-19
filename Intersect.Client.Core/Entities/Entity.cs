@@ -161,6 +161,8 @@ public partial class Entity : IEntity
 
     public string Name { get; set; } = string.Empty;
 
+    public string DisplayName { get; set; } = string.Empty;
+    
     public Color? NameColor { get; set; } = null;
 
     public bool Passable { get; set; }
@@ -1684,7 +1686,7 @@ public partial class Entity : IEntity
             backgroundColor = Color.Transparent;
         }
 
-        var name = Name;
+        var name = string.IsNullOrWhiteSpace(DisplayName) ? Name : DisplayName;
         if ((this is Player && Options.Instance.Player.ShowLevelByName) ||
             (Type == EntityType.GlobalEntity && Options.Instance.Npc.ShowLevelByName))
         {

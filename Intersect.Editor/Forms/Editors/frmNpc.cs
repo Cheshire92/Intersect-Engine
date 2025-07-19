@@ -271,6 +271,7 @@ public partial class FrmNpc : EditorForm
             pnlContainer.Show();
 
             txtName.Text = mEditorItem.Name;
+            txtDisplayName.Text = mEditorItem.DisplayName;
             cmbFolder.Text = mEditorItem.Folder;
             cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
             nudRgbaR.Value = mEditorItem.Color.R;
@@ -1118,5 +1119,10 @@ public partial class FrmNpc : EditorForm
     private void nudTenacity_ValueChanged(object sender, EventArgs e)
     {
         mEditorItem.Tenacity = (double)nudTenacity.Value;
+    }
+
+    private void txtDisplayName_TextChanged(object sender, EventArgs e)
+    {
+        mEditorItem.DisplayName = txtDisplayName.Text;
     }
 }

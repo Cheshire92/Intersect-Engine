@@ -377,12 +377,14 @@ internal sealed partial class PacketHandler
         {
             en.Load(packet);
             en.Aggression = packet.Aggression;
+            en.DisplayName = packet.DisplayName;
         }
         else
         {
             var entity = new Entity(packet.EntityId, packet, EntityType.GlobalEntity)
             {
                 Aggression = packet.Aggression,
+                DisplayName = packet.DisplayName,
             };
             Globals.Entities.Add(entity.Id, entity);
         }
